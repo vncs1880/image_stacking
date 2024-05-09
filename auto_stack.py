@@ -1,4 +1,6 @@
 import os
+import shutil
+
 import cv2
 import numpy as np
 import time
@@ -111,7 +113,7 @@ if __name__ == '__main__':
         import PySimpleGUI as sg
 
         file_list = sg.popup_get_file('', file_types=(('imgs', '.jpg .png .bmp'),), multiple_files=True, no_window=True, keep_on_top=True)
-        method = 'ECC'
+        method = 'ECC' if sg.popup_yes_no('ECC? (Slower but more accurate)', keep_on_top=True, auto_close=True, auto_close_duration=5) == 'Yes' else 'ORB'
         # import time
         output_image = strftime("%Y-%m-%d %H.%M.%S") + '.jpg'
         show = True if sg.popup_yes_no('display img?', keep_on_top=True, auto_close=True, auto_close_duration=5) == 'Yes' else False
@@ -139,6 +141,14 @@ if __name__ == '__main__':
 
         output_image = args.output_image
         show = args.show
+
+    file_list2 = []
+    import unidecode
+    for idx, file in enumerate(file_list):
+        if file != unidecode.unidecode(file):
+            shutil.copy(file, unidecode.unidecode(file))
+        file_list2.append(unidecode.unidecode(file))
+    file_list = file_list2
 
     tic = time()
 
